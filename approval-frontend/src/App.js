@@ -49,67 +49,35 @@ const Textarea = ({ label, ...props }) => (
   </div>
 );
 
+const handleLogin = async () => {
+  if (!email || !password) {
+    alert("Please enter email and password");
+    return;
+  }
 
+  try {
+    const res = await fetch("https://your-api-name.onrender.com/api/login", {
+      method: "POST",
+      body: new URLSearchParams({ email, password }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
-const LoginPage = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    // Simple mock authentication - password can be anything for demo
-    const mockUsers = {
-      'l1@test.com': { email: 'l1@test.com', role: 'L1', name: 'L1 User' },
-      'l2@test.com': { email: 'l2@test.com', role: 'L2', name: 'L2 Approver' },
-      'l3@test.com': { email: 'l3@test.com', role: 'L3', name: 'L3 Approver' },
-      'l0@test.com': { email: 'l0@test.com', role: 'L0', name: 'L0 Viewer' },
-      'admin@test.com': { email: 'admin@test.com', role: 'admin', name: 'Admin' }
-    };
-    
-    if (mockUsers[email] && password) {
-      onLogin(mockUsers[email], 'mock-token-' + email);
-    } else if (!mockUsers[email]) {
-      alert('User not found. Use one of these emails:\n\nl1@test.com\nl2@test.com\nl3@test.com\nl0@test.com\nadmin@test.com\n\nPassword: any password works for demo');
-    } else {
-      alert('Please enter a password');
+    if (!res.ok) {
+      const error = await res.json();
+      alert(error.detail || "Login failed");
+      return;
     }
-  };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      <GlassCard className="w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div className="inline-block p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-4">
-            <Camera className="w-12 h-12 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Approval Workflow</h1>
-          <p className="text-white/70">Sign in to continue</p>
-        </div>
-        
-        <Input
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-        />
-        
-        <Input
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter any password"
-          onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-        />
-        
-        <Button onClick={handleLogin} className="w-full mt-6">
-          Sign In
-        </Button>
-      </GlassCard>
-    </div>
-  );
+    const data = await res.json();
+    onLogin(data.user, data.token);
+  } catch (err) {
+    console.error("Login error:", err);
+    alert("Failed to connect to the server. Check your API URL.");
+  }
 };
+
 
 const L1Dashboard = ({ user, token }) => {
   const [showForm, setShowForm] = useState(false);
