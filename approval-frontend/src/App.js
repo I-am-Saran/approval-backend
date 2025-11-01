@@ -60,7 +60,10 @@ const LoginPage = ({ onLogin }) => {
       const res = await fetch('https://approval-workflow-api.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ email, password }),
+        body: new URLSearchParams({
+        email: email,
+        password: password,  // Ensure both email and password are passed
+      }),
       });
 
       if (!res.ok) {
