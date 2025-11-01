@@ -12,7 +12,7 @@ app = FastAPI()
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://workflow-3ekfjakh3-saranrajs-projects-f67265d0.vercel.app"],  # Update with your Vercel domain in production
+    allow_origins=["https://workflow-lake-xi.vercel.app"],  # Update with your Vercel domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
