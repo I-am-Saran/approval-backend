@@ -49,34 +49,49 @@ const Textarea = ({ label, ...props }) => (
   </div>
 );
 
-const handleLogin = async () => {
-  if (!email || !password) {
-    alert("Please enter email and password");
-    return;
-  }
+const LoginPage = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  try {
-    const res = await fetch("https://your-api-name.onrender.com/api/login", {
-      method: "POST",
-      body: new URLSearchParams({ email, password }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (!res.ok) {
-      const error = await res.json();
-      alert(error.detail || "Login failed");
-      return;
+    try {
+      const res = await fetch('https://approval-workflow-api.onrender.com/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email, password }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.detail || 'Login failed');
+        return;
+      }
+
+      const data = await res.json();
+      onLogin(data.user, data.token);
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Unable to connect to API');
     }
+  };
 
-    const data = await res.json();
-    onLogin(data.user, data.token);
-  } catch (err) {
-    console.error("Login error:", err);
-    alert("Failed to connect to the server. Check your API URL.");
-  }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4">
+      <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl w-full max-w-md">
+        <h2 className="text-3xl font-bold text-white mb-6 text-center">Approval Workflow</h2>
+        <form onSubmit={handleSubmit}>
+          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" />
+          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter any password" />
+          <Button className="w-full mt-4">Sign In</Button>
+        </form>
+
+      </div>
+    </div>
+  );
 };
+
 
 
 const L1Dashboard = ({ user, token }) => {
