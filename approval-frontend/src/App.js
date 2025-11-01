@@ -106,18 +106,6 @@ const LoginPage = ({ onLogin }) => {
         <Button onClick={handleLogin} className="w-full mt-6">
           Sign In
         </Button>
-        
-        <div className="mt-6 p-4 bg-white/5 rounded-xl">
-          <p className="text-xs text-white/90 font-semibold mb-2">📧 Demo Users:</p>
-          <div className="space-y-1 text-xs text-white/70">
-            <p>• l1@test.com (L1 User - Create Requests)</p>
-            <p>• l2@test.com (L2 Approver)</p>
-            <p>• l3@test.com (L3 Approver)</p>
-            <p>• l0@test.com (L0 Viewer)</p>
-            <p>• admin@test.com (Admin)</p>
-            <p className="mt-2 text-white/90">🔑 Password: <span className="font-semibold">any password</span></p>
-          </div>
-        </div>
       </GlassCard>
     </div>
   );
