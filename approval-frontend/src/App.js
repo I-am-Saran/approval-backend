@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, CheckCircle, XCircle, Eye, LogOut, Plus, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 
-const API_BASE = 'https://approval-workflow-api.onrender.com/';
+const API_BASE = 'https://approval-workflow-api.onrender.com';
 
 const GlassCard = ({ children, className = '' }) => (
   <div className={`backdrop-blur-lg bg-white/10 rounded-2xl border border-white/20 shadow-2xl ${className}`}>
@@ -48,6 +48,8 @@ const Textarea = ({ label, ...props }) => (
     />
   </div>
 );
+
+
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
