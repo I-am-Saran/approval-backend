@@ -57,13 +57,13 @@ const LoginPage = ({ onLogin }) => {
     e.preventDefault();
 
     try {
-      const res = await fetch('https://approval-workflow-api.onrender.com/api/login', {
+      const res = await fetch('https://approval-workflow-api.onrender.com/login', {  // 👈 Updated endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
-        email: email,
-        password: password,  // Ensure both email and password are passed
-      }),
+          email: email,
+          password: password,
+        }),
       });
 
       if (!res.ok) {
@@ -85,11 +85,22 @@ const LoginPage = ({ onLogin }) => {
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl w-full max-w-md">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Approval Workflow</h2>
         <form onSubmit={handleSubmit}>
-          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" />
-          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter any password" />
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter any password"
+          />
           <Button className="w-full mt-4">Sign In</Button>
         </form>
-
       </div>
     </div>
   );
