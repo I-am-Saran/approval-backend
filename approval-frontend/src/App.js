@@ -124,12 +124,37 @@ const L1Dashboard = ({ user, token }) => {
   }, []);
 
   const fetchRequests = async () => {
-    const mockRequests = [
-      { id: 1, title: 'Budget Approval', description: 'Q4 Marketing Budget', status: 'pending', current_stage: 1, workflow_snapshot: ['L1', 'L2', 'L3'], created_at: '2024-10-28' },
-      { id: 2, title: 'New Hire Request', description: 'Senior Developer Position', status: 'approved', current_stage: 3, workflow_snapshot: ['L1', 'L2', 'L3'], created_at: '2024-10-25' }
-    ];
-    setRequests(mockRequests);
-  };
+  try {
+    console.log("Fetching requests for:", user?.email);
+
+    const res = await fetch(
+      `https://approval-workflow-api.onrender.com/api/requests?requester_email=${encodeURIComponent(user.email)}`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Fetch error:", err);
+      alert(err.detail || "Failed to fetch requests");
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Fetched requests:", data);
+
+    // data should be an array
+    setRequests(data);
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+    alert("Error fetching requests");
+  }
+};
 
   const createRequest = async () => {
   if (!title || !description) {
