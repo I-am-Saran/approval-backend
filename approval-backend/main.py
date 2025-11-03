@@ -37,23 +37,27 @@ class WorkflowConfig(BaseModel):
     workflow_order: List[str]
 
 # Auth Helper
-async def get_current_user(authorization: Optional[str] = Header(None)):
+def get_current_user(authorization: str = Header(None)):
     if not authorization:
-        raise HTTPException(status_code=401, detail="Missing authorization header")
-    
-    try:
-        token = authorization.replace("Bearer ", "")
-        user = supabase.auth.get_user(token)
-        
-        # Get user role from users table
-        result = supabase.table("users").select("*").eq("email", user.user.email).execute()
-        if not result.data:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        user_data = result.data[0]
-        return user_data
-    except Exception as e:
+        raise HTTPException(status_code=401, detail="Missing Authorization header")
+
+    # Expect "Bearer mock-token-email"
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Invalid Authorization header format")
+
+    token = parts[1]
+    if not token.startswith("mock-token-"):
         raise HTTPException(status_code=401, detail="Invalid token")
+
+    email = token.replace("mock-token-", "")
+
+    # Lookup the user in DB
+    response = supabase.table("users").select("*").eq("email", email).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return response.data[0]
 
 # Endpoints
 @app.get("/")
