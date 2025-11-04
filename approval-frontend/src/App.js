@@ -295,26 +295,14 @@ const ApproverDashboard = ({ user, token }) => {
 
 const fetchPendingRequests = async () => {
   try {
-    const res = await fetch(`https://approval-workflow-api.onrender.com/api/requests/pending/${user.role}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
+    const response = await fetch(`${API_URL}/api/requests/pending/${user.role}`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      alert(`Failed to load requests: ${err.detail}`);
-      return;
-    }
-
-    const data = await res.json();
-    console.log("Fetched pending requests:", data);
+    if (!response.ok) throw new Error(`Failed to load requests`);
+    const data = await response.json();
     setRequests(data);
-  } catch (error) {
-    console.error("Fetch pending requests error:", error);
-    alert("Error connecting to API");
+  } catch (err) {
+    alert("Failed to load requests: " + err.message);
   }
 };
 
