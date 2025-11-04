@@ -101,14 +101,24 @@ async def create_request(request: ApprovalRequest, user=Depends(get_current_user
 
 @app.get("/api/requests/my-requests")
 async def get_my_requests(user=Depends(get_current_user)):
-    if user["role"] != "L1":
-        raise HTTPException(status_code=403, detail="Only L1 users can view their requests")
-    
-    result = supabase.table("approval_requests")\
-        .select("*")\
-        .eq("requester_email", user["email"])\
-        .order("created_at", desc=True)\
-        .execute()
+    if user["role"] == "L1":
+        # L1 sees their own requests (raised by them)
+        result = supabase.table("approval_requests")\
+            .select("*")\
+            .eq("requester_email", user["email"])\
+            .order("created_at", desc=True)\
+            .execute()
+    else:
+        # Approvers (L2, L3, etc.) see requests waiting for them
+        result = supabase.table("approval_requests")\
+            .select("*")\
+            .contains("workflow_snapshot", [user["role"]])\
+            .eq("status", "pending")\
+            .execute()
+        
+        # Filter in Python to ensure current_stage matches this role
+        filtered = [r for r in result.data if r["workflow_snapshot"][r["current_stage"]] == user["role"]]
+        result.data = filtered
     
     return result.data
 
